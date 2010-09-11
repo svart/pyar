@@ -9,7 +9,7 @@ class ID3Header:
         self.flags = {"a":0,        #Unsynchronisation – используется только с MPEG-2 и MPEG-2.5 форматами.
                       "b":0,        #Extended header – указывает на наличие расширенного заголовка
                       "c":0,        #Experimental indicator – эксперементальный индикатор
-                      "d":0}        #Footer present
+                      "d":0}        #Footer present - только для ID3v2.4.0
     
     def GetMarker(self, music_file):
         """Возвращает ID3 маркер файла"""
