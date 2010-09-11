@@ -8,7 +8,8 @@ class ID3Header:
         self.subversion = 0
         self.flags = {"a":0,        #Unsynchronisation – используется только с MPEG-2 и MPEG-2.5 форматами.
                       "b":0,        #Extended header – указывает на наличие расширенного заголовка
-                      "c":0}        #Experimental indicator – эксперементальный индикатор
+                      "c":0,        #Experimental indicator – эксперементальный индикатор
+                      "d":0}        #Footer present
     
     def GetMarker(self, music_file):
         """Возвращает ID3 маркер файла"""
@@ -46,8 +47,9 @@ class ID3Header:
         aFlag = ord(flags)/128
         bFlag = ord(flags)%128/64
         cFlag = ord(flags)%64/32
+        dFlag = ord(flags)%32/16
         music_file.seek(currentPosition)
-        return [aFlag, bFlag, cFlag]
+        return [aFlag, bFlag, cFlag, dFlag]
 
     def ReadHeader(self, music_file):
         """Читает заголовок ID3 тега"""

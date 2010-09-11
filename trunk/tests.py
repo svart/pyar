@@ -12,13 +12,15 @@ f = open(filePath, "rb");
 header = ID3Header()
 header.ReadHeader(f)
 
-print header.dataLength, header.flags, header.version
+print "Version/Subversion: ", header.version, "/", header.subversion
+print "Header Flags: ", header.flags
+print "Header Length: ", header.dataLength
 
 #####################Testing getting file info##########################
-fileInfo = FileInformation()       
+#fileInfo = FileInformation()       
         
-print fileInfo.GetFileSizeByPath("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3", "M");
-print fileInfo.GetFileAccessTime("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3")
-print fileInfo.GetFileModificationTime("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3")
+#print fileInfo.GetFileSizeByPath("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3", "M");
+#print fileInfo.GetFileAccessTime("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3")
+#print fileInfo.GetFileModificationTime("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3")
 
 
