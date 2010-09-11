@@ -1,9 +1,10 @@
 # -*- coding: UTF8 -*-
 
 class ID3FrameHeader:
-    def __init__(self, startPosition):
-        self.startPosition = startPosition
+    def __init__(self):
+        self.startPosition = 0
         self.dataLength = 0
+        self.headerLength = 10      #По умолчанию заголовок фрейма равен 10 байтам. TODO:Обработать другие случаи в зависимости от флагов
         self.id = ""
         self.flags = {"a":0,        #
                       "b":0,        #
@@ -43,7 +44,8 @@ class ID3FrameHeader:
         music_file.seek(currentPosition)
         return [aFlag, bFlag, cFlag, iFlag, jFlag, kFlag]
         
-    def ReadHeader(self, music_file):
+    def ReadHeader(self, music_file, startPosition):  
+        self.startPosition = startPosition      
         self.id = self.GetId(music_file)
         self.dataLength = self.GetSize(music_file)
         flags = self.GetFlags(music_file)

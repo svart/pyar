@@ -4,7 +4,8 @@ sys.path.append("modules");
 
 from ID3Header import ID3Header
 from FileInfo import FileInformation
-from ID3FrameHeader import ID3FrameHeader
+#from ID3FrameHeader import ID3FrameHeader
+from ID3Frame import ID3Frame
 
 #####################Testing reading tags##########################
 filePath = "/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3"
@@ -27,9 +28,24 @@ print ""
 #print fileInfo.GetFileAccessTime("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3")
 #print fileInfo.GetFileModificationTime("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3")
 
-frameHeader = ID3FrameHeader(10)
-frameHeader.ReadHeader(f)
+#frameHeader = ID3FrameHeader(10)
+#frameHeader.ReadHeader(f)
 
-print "Frame ID: ", frameHeader.id
-print "Frame Length: ", frameHeader.dataLength
-print "Frame Flags:", frameHeader.flags
+
+frames = []
+
+position = 10
+while position < header.dataLength:
+    frame = ID3Frame()
+    frame.ReadFrame(f, position)
+    frames.append(frame)
+    position =position + frame.header.headerLength + frame.header.dataLength
+    print position, " ",
+
+for frame in frames:
+    print "Frame ID: ", frame.header.id
+    print "Frame Data Length: ", frame.header.dataLength
+    print "Frame Flags: ", frame.header.flags
+    print "Frame Data: ", frame.data
+
+f.close()
