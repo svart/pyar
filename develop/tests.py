@@ -4,7 +4,6 @@ sys.path.append("modules");
 
 from ID3Header import ID3Header
 from FileInfo import FileInformation
-#from ID3FrameHeader import ID3FrameHeader
 from ID3Frame import ID3Frame
 
 #####################Testing reading tags##########################
