@@ -1,6 +1,6 @@
 # -*- coding: UTF8 -*-
 import sys
-sys.path.append("modules");
+sys.path.append("../modules");
 
 from ID3Header import ID3Header
 from FileInfo import FileInformation
