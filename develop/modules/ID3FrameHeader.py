@@ -1,17 +1,33 @@
 # -*- coding: UTF8 -*-
 
 class ID3FrameHeader:
+    """Основной объект ID3 тега
+    
+    Это базовый класс для различных видов тегов.
+    """
+
+    FLAG23_ALTERTAG     = 0x8000
+    FLAG23_ALTERFILE    = 0x4000
+    FLAG23_READONLY     = 0x2000
+    FLAG23_COMPRESS     = 0x0080
+    FLAG23_ENCRYPT      = 0x0040
+    FLAG23_GROUP        = 0x0020
+
+    FLAG24_ALTERTAG     = 0x4000
+    FLAG24_ALTERFILE    = 0x2000
+    FLAG24_READONLY     = 0x1000
+    FLAG24_GROUPID      = 0x0040
+    FLAG24_COMPRESS     = 0x0008
+    FLAG24_ENCRYPT      = 0x0004
+    FLAG24_UNSYNCH      = 0x0002
+    FLAG24_DATALEN      = 0x0001
+    
     def __init__(self):
         self.startPosition = 0
         self.dataLength = 0
-        self.headerLength = 10      #По умолчанию заголовок фрейма равен 10 байтам. TODO:Обработать другие случаи в зависимости от флагов
+        self.headerLength = 10      #По умолчанию заголовок фрейма равен 10 байтам.
         self.id = ""
-        self.flags = {"a":0,        #
-                      "b":0,        #
-                      "c":0,        #
-                      "i":0,        #
-                      "j":0,        #
-                      "k":0}        #
+        self.flags = 0
 
     def GetId(self, music_file):
         currentPosition = music_file.tell()
@@ -33,21 +49,13 @@ class ID3FrameHeader:
     def GetFlags(self, music_file):
         currentPosition = music_file.tell()
         music_file.seek(self.startPosition+8)
-        flags = music_file.read(1)
-        aFlag = ord(flags)/128
-        bFlag = ord(flags)%128/64
-        cFlag = ord(flags)%64/32
-        flags = music_file.read(1)
-        iFlag = ord(flags)/128
-        jFlag = ord(flags)%128/64
-        kFlag = ord(flags)%64/32
+        flags = music_file.read(2)              #Читаем 2 байта флагов
         music_file.seek(currentPosition)
-        return [aFlag, bFlag, cFlag, iFlag, jFlag, kFlag]
+        return flags
         
     def ReadHeader(self, music_file, startPosition):  
         self.startPosition = startPosition      
         self.id = self.GetId(music_file)
         self.dataLength = self.GetSize(music_file)
-        flags = self.GetFlags(music_file)
-        self.flags = dict(zip(self.flags.keys(),flags))
+        self.flags = self.GetFlags(music_file)
 
