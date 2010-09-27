@@ -1,4 +1,4 @@
-# -*- coding: UTF8 -*-
+#coding=UTF-8
 
 class ID3Header:
     def __init__(self):
@@ -26,7 +26,7 @@ class ID3Header:
         byteLength = music_file.read(4)
         id3Length = 0
         for x in byteLength:
-            id3Length = id3Length*128 + ord(x)%128
+            id3Length = id3Length*128 + x%128
         music_file.seek(currentPosition)    
         return id3Length
         
@@ -54,7 +54,7 @@ class ID3Header:
     def ReadHeader(self, music_file):
         """Читает заголовок ID3 тега"""
         self.marker = self.GetMarker(music_file)
-        if self.marker != "ID3":
+        if self.marker != b'ID3':
             raise ValueError('This file does not have ID3 Header.')
             
         self.dataLength = self.GetDataLength(music_file)

@@ -26,7 +26,7 @@ class ID3FrameHeader:
         byteLength = music_file.read(4)
         frameLength = 0
         for x in byteLength:
-            frameLength = frameLength*256 + ord(x)%256
+            frameLength = frameLength*256 + x%256
         music_file.seek(currentPosition)    
         return frameLength
         
