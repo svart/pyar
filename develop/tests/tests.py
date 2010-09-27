@@ -7,9 +7,9 @@ from FileInfo import FileInformation
 from ID3Frame import ID3Frame
 
 #####################Testing reading tags##########################
-filePath = "/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3"
-filePath2 = "/media/FreeAgent/Music/Dawn of Tears/2007 - Descent/03 - Lost Verses.mp3"
-filePath3 = "/media/FreeAgent/Music/Godsmack/2010 - The Oracle/02 - Saint And Sinners.mp3"
+filePath = "/media/LVM/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3"
+filePath2 = "/media/LVM/Music/Dawn of Tears/2007 - Descent/03 - Lost Verses.mp3"
+filePath3 = "/media/LVM/Music/Godsmack/2010 - The Oracle/02 - Saint And Sinners.mp3"
 f = open(filePath3, "rb");
 
 header = ID3Header()
@@ -27,10 +27,6 @@ print ""
 #print fileInfo.GetFileAccessTime("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3")
 #print fileInfo.GetFileModificationTime("/media/FreeAgent/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3")
 
-#frameHeader = ID3FrameHeader(10)
-#frameHeader.ReadHeader(f)
-
-
 frames = []
 
 position = 10
@@ -42,9 +38,10 @@ while position < header.dataLength:
     print position, " ",
 
 for frame in frames:
-    print "Frame ID: ", frame.header.id
-    print "Frame Data Length: ", frame.header.dataLength
-    print "Frame Flags: ", frame.header.flags
-    print "Frame Data: ", frame.data
+    if frame.header.dataLength != 0:
+        print "Frame ID: ", frame.header.id
+        print "Frame Data Length: ", frame.header.dataLength
+        print "Frame Flags: ", frame.header.flags
+        print "Frame Data: ", frame.data
 
 f.close()
