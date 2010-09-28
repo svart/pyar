@@ -3,6 +3,11 @@
 from ID3FrameHeader import ID3FrameHeader
 
 class ID3Frame:
+    """Основной объект ID3 тега
+    
+    Это базовый класс для различных видов тегов.
+    """
+
     def __init__(self):
         self.startPosition = 0
         self.header = ID3FrameHeader()
@@ -11,11 +16,14 @@ class ID3Frame:
     def ReadData(self, music_file):
         currentPosition = music_file.tell()
         music_file.seek(self.startPosition+self.header.headerLength)
+
         data = music_file.read(self.header.dataLength)
+
         music_file.seek(currentPosition)
+
         return data
     
-    def ReadFrame(self, music_file, startPosition):
+    def ReadFrame(self, music_file, startPosition, version):
         self.startPosition = startPosition
-        self.header.ReadHeader(music_file, startPosition)
+        self.header.ReadHeader(music_file, startPosition, version)
         self.data = self.ReadData(music_file)

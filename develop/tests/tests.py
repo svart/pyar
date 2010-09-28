@@ -32,7 +32,7 @@ frames = []
 position = 10
 while position < header.dataLength:
     frame = ID3Frame()
-    frame.ReadFrame(f, position)
+    frame.ReadFrame(f, position, header.version)
     frames.append(frame)
     position =position + frame.header.headerLength + frame.header.dataLength
     print(position, " ", end=' ')
