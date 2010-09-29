@@ -3,7 +3,6 @@
 class ID3FrameHeader:
     """Заголовок фрейма в ID3 теге
     """
-    
 
     def __init__(self, version):
         self.FIRST_BIT = 0x0001
