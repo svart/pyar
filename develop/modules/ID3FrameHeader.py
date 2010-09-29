@@ -3,13 +3,13 @@
 class ID3FrameHeader:
     """Заголовок фрейма в ID3 теге
     """
+
+    FIRST_BIT = 0x0001
+    FLAG23_OFFSET = {"ALTERTAG":15, "ALTERFILE":14, "READONLY":13, "COMPRESS":7, "ENCRYPT":6, "GROUP":5}
+    FLAG24_OFFSET = {"ALTERTAG":14, "ALTERFILE":13, "READONLY":12, "GROUPID":6, "COMPRESS":3, "ENCRYPT":2, "UNSYNCH":1, "DATALEN":0}
     
 
     def __init__(self):
-        self.FIRST_BIT = 0x0001
-        self.FLAG23_OFFSET = {"ALTERTAG":15, "ALTERFILE":14, "READONLY":13, "COMPRESS":7, "ENCRYPT":6, "GROUP":5}
-        self.FLAG24_OFFSET = {"ALTERTAG":14, "ALTERFILE":13, "READONLY":12, "GROUPID":6, "COMPRESS":3, "ENCRYPT":2, "UNSYNCH":1, "DATALEN":0}
-
         self.startPosition = 0
         self.dataLength = 0
         self.headerLength = 10      #По умолчанию заголовок фрейма равен 10 байтам.
@@ -43,12 +43,12 @@ class ID3FrameHeader:
         flags = {}
         
         if version == 3:
-            for key in self.FLAG23_OFFSET:
-                flags[key] = bitFlags>>self.FLAG23_OFFSET[key] & self.FIRST_BIT
+            for key in ID3FrameHeader.FLAG23_OFFSET:
+                flags[key] = bitFlags>>ID3FrameHeader.FLAG23_OFFSET[key] & ID3FrameHeader.FIRST_BIT
 
         if version == 4:
-            for key in self.FLAG24_OFFSET:
-                flags[key] = bitFlags>>self.FLAG24_OFFSET[key] & self.FIRST_BIT
+            for key in ID3FrameHeader.FLAG24_OFFSET:
+                flags[key] = bitFlags>>ID3FrameHeader.FLAG24_OFFSET[key] & ID3FrameHeader.FIRST_BIT
         
         music_file.seek(currentPosition)
         return flags
