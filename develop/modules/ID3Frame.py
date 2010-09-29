@@ -16,21 +16,6 @@ class ID3Frame:
         self.header = ID3FrameHeader(id3Header.version)
         self.data = 0
     
-    def decode(self, value):
-        output = []
-        safe = True
-        append = output.append
-        for val in value:
-            if safe:
-                append(chr(val))
-                safe = val != '\xFF'
-            else:
-                if val >= '\xE0': raise ValueError('invalid sync-safe string')
-                elif val != '\x00': append(chr(val))
-                safe = True
-        if not safe: raise ValueError('string ended unsafe')
-        return "".join(output)
-    
     def ReadData(self, music_file):
         currentPosition = music_file.tell()
         music_file.seek(self.startPosition+self.header.headerLength)
