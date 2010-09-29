@@ -31,17 +31,17 @@ frames = []
 
 position = 10
 while position < header.dataLength:
-    frame = ID3Frame()
-    frame.ReadFrame(f, position, header.version)
+    frame = ID3Frame(header)
+    frame.ReadFrame(f, position)
     frames.append(frame)
     position =position + frame.header.headerLength + frame.header.dataLength
-    print(position, " ", end=' ')
+#    print(position, " ", end=' ')
 
 for frame in frames:
     if frame.header.dataLength != 0:
         print("Frame ID: ", bytes.decode(frame.header.id))
         print("Frame Data Length: ", frame.header.dataLength)
-        print("Frame Flags: ", frame.header.flags)
-        print("Frame Data: ", frame.data, " => " , bytes.decode(frame.data))
+        #print("Frame Flags: ", frame.header.flags)
+        print("Frame Data: ", frame.data, " => ")# , bytes.decode(frame.data), "\n")
 
 f.close()

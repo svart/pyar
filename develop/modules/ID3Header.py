@@ -2,14 +2,13 @@
 
 class ID3Header:
     def __init__(self):
+        self.FIRST_BIT = 0x01
+        self.FLAG_OFFSET = {"UNSYNCH":7, "EXTHEADER":6, "EXPERIMENT":5, "FOOTERPRES":4}
         self.dataLength = 0
         self.marker = ""
         self.version = 0
         self.subversion = 0
-        self.flags = {"a":0,        #Unsynchronisation – используется только с MPEG-2 и MPEG-2.5 форматами.
-                      "b":0,        #Extended header – указывает на наличие расширенного заголовка
-                      "c":0,        #Experimental indicator – эксперементальный индикатор
-                      "d":0}        #Footer present - только для ID3v2.4.0
+        self.flags = {}
     
     def GetMarker(self, music_file):
         """Возвращает ID3 маркер файла"""
@@ -43,13 +42,14 @@ class ID3Header:
         """Возвращает флаги в заголовке тега"""
         currentPosition = music_file.tell()
         music_file.seek(5)
-        flags = music_file.read(1)
-        aFlag = ord(flags)/128
-        bFlag = ord(flags)%128/64
-        cFlag = ord(flags)%64/32
-        dFlag = ord(flags)%32/16
+        
+        bitFlags = music_file.read(1)
+        flags = {}
+        for key in self.FLAG_OFFSET:
+            flags[key] = ord(bitFlags)>>self.FLAG_OFFSET[key] & self.FIRST_BIT
+            
         music_file.seek(currentPosition)
-        return [aFlag, bFlag, cFlag, dFlag]
+        return flags
 
     def ReadHeader(self, music_file):
         """Читает заголовок ID3 тега"""
@@ -61,5 +61,4 @@ class ID3Header:
         
         self.version, self.subversion = self.GetVersions(music_file)
         
-        flags = self.GetFlags(music_file)
-        self.flags = dict(zip(self.flags.keys(),flags))
+        self.flags = self.GetFlags(music_file)
