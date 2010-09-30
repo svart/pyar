@@ -1,6 +1,6 @@
 #coding=UTF-8
 import sys
-sys.path.append("../modules");
+sys.path.append("../modules")
 
 from ID3v2 import ID3Header, ID3Frame
 
