@@ -16,7 +16,6 @@ class ID3v1(object):
     def GetTag (self, music_file):
         music_file.seek(-128, 2)        #128 байт с конца файла
         ID = music_file.read(3)
-        print (ID)
         
         if ID != b"TAG":
             raise ValueError('This file does not have ID3v1 tag.')
@@ -33,6 +32,20 @@ class ID3v1(object):
             self.comment = self.comment[:28]
             
         self.genre = self.GetGenreByID(genreId)
+        
+        # Чтение расширенного тега, если он есть
+        music_file.seek(-355, 2)        # 227 байт перед обычным тегом
+        ID = music_file.read(4)
+        
+        if ID == b"TAG+":
+            self.title += music_file.read(60)
+            self.artist += music_file.read(60)
+            self.album += music_file.read(60)
+            self.speed = music_file.read(1)
+            self.genre = music_file.read(30)
+            self.startTime = music_file.read(6)
+            self.stopTime = music_file.read(6)
+            
 
     def GetGenreByID (self, code):
         genres = {0 :"Blues",
