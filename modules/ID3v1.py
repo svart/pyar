@@ -26,7 +26,7 @@ class ID3v1(object):
         self.year = music_file.read(4)
         self.comment = music_file.read(30)
         genreId = music_file.read(1)
-        
+
         if self.comment[28] == 0:
             self.track = self.comment[29]
             self.comment = self.comment[:28]
@@ -173,6 +173,29 @@ class ID3v1(object):
                   122 :"Drum Solo",
                   123 :"A Capela",
                   124 :"Euro-House",
-                  125 :"Dance Hall"}
+                  125 :"Dance Hall",
+                  126 :"Goa",
+                  127 :"Drum & Bass",
+                  128 :"Club-House",
+                  129 :"Hardcore",
+                  130 :"Terror",
+                  131 :"Indie",
+                  132 :"BritPop",
+                  133 :"Negerpunk",
+                  134 :"Polsk punk",
+                  135 :"Beat",
+                  136 :"Christian Gangsta",
+                  137 :"Heavy Metal",
+                  138 :"Black Metal",
+                  139 :"Crossover",
+                  140 :"Contemporary C",
+                  141 :"Christian Rock",
+                  142 :"Merengue",
+                  143 :"Salsa",
+                  144 :"Thrash Metal",
+                  145 :"Anime",
+                  146 :"JPop",
+                  147 :"SynthPop"}
+                  
         return genres.get(ord(code), "Unknown")
 
