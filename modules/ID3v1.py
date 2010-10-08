@@ -18,7 +18,7 @@ class ID3v1(object):
         ID = music_file.read(3)
         
         if ID != b"TAG":
-            raise ValueError('This file does not have ID3v1 tag.')
+            raise IOError('This file does not have ID3v1 tag.')
         
         self.title = music_file.read(30)
         self.artist = music_file.read(30)
@@ -36,7 +36,7 @@ class ID3v1(object):
         # Чтение расширенного тега, если он есть
         music_file.seek(-355, 2)        # 227 байт перед обычным тегом
         ID = music_file.read(4)
-        
+
         if ID == b"TAG+":
             self.title += music_file.read(60)
             self.artist += music_file.read(60)
