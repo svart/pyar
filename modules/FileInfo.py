@@ -3,20 +3,24 @@
 import os
 import time
 
-class FileInformation:
+class FileInformation(object):
+    """ Базованя информация о файле. """
     def __init__(self, path):
         if os.path.exists(path):
+            ## Полный путь файла.
             self.fullPath = os.path.dirname(path) + "/" + os.path.basename(path)
+            ## Путь к директории, где содержится файл.
             self.dirName = os.path.dirname(path)
+            ## Имя файла.
             self.fileName = os.path.basename(path)
         else:
             raise IOError ('File does not exist: ' + path)
         
     def FileSize (self, humanize=None):
-        """ Функция возвращает размер файла в указанных единицах.
-            Входные параметры: path - путь к файлу (строка)
-                               humanize - единицы, к которым приводится размер 
-                                          допустимые значения:'B', 'K', 'M', 'G', 'T' """
+        """ Возвращает размер файла в указанных единицах.
+            @param humanize Единицы, к которым приводится размер. Допустимые значения:'B', 'K', 'M', 'G', 'T' 
+            @return Вещественное число - размер файла.
+        """
         
         b=os.path.getsize(self.fullPath)
         if not humanize or humanize == "B": return b
@@ -27,8 +31,11 @@ class FileInformation:
         else: return None
 
     def MakeDictFromTime(self, timeStruct):
-        """ Функция возвращает словарь, свормированный из поданной на вход структуры времени.
-            Входные параметры: timeStruct - структура времени. """
+        """ Формирует словарь из структуры времени.
+            
+            @param timeStruct Структура времени.
+            @return Словарь, свормированный из поданной на вход структуры времени.
+        """
             
         DiffTime = {}
         DiffTime["Year"] = timeStruct.tm_year
@@ -43,14 +50,20 @@ class FileInformation:
         
     
     def FileAccessTime (self):
-        """ Функция возвращает время(дату) последнего доступа к файлу.
-            Входные параметры: path - путь к файлу (строка). """
+        """ Время последнего доступа к файлу.
+            
+            @param path Путь к файлу (строка). 
+            @return Словать с датой и временем последнего доступа к файлу.
+        """
     
         return self.MakeDictFromTime(time.gmtime(os.path.getatime(self.fullPath)))
     
     def FileModificationTime (self):
-        """ Функция возвращает время(дату) последнего изменения файла.
-            Входные параметры: path - путь к файлу (строка). """
+        """ Время последнего изменения файла.
+            
+            @param path Путь к файлу (строка). 
+            @return Словать с датой и временем последнего изменения файла.
+        """
     
         return self.MakeDictFromTime(time.gmtime(os.path.getmtime(self.fullPath)))
 
