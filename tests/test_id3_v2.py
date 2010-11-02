@@ -9,7 +9,8 @@ filePath = "/media/LVM/Music/Dark Age/2008 - Minus Exitus/01 - Minus Exitus.mp3"
 filePath2 = "/media/LVM/Music/Dawn of Tears/2007 - Descent/03 - Lost Verses.mp3"
 filePath3 = "/media/LVM/Music/Godsmack/2010 - The Oracle/02 - Saint And Sinners.mp3"
 encryptFilePath = "/media/LVM/Music/Children of Bodom/1997 - Children Of Bodom/01 - Children Of Bodom.mp3"
-f = open(encryptFilePath, "rb");
+filePath4 = "./01.mp3"
+f = open(filePath4, "rb");
 
 header = ID3Header()
 header.ReadHeader(f)

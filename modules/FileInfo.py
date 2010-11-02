@@ -51,8 +51,6 @@ class FileInformation(object):
     
     def FileAccessTime (self):
         """ Время последнего доступа к файлу.
-            
-            @param path Путь к файлу (строка). 
             @return Словать с датой и временем последнего доступа к файлу.
         """
     
@@ -60,8 +58,6 @@ class FileInformation(object):
     
     def FileModificationTime (self):
         """ Время последнего изменения файла.
-            
-            @param path Путь к файлу (строка). 
             @return Словать с датой и временем последнего изменения файла.
         """
     

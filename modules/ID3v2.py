@@ -5,9 +5,6 @@
 # Располагается вначале файла, перед аудиоданными.
 #
 
-import struct
-from zlib import error as zlibError
-
 class ID3Header:
     """Заголовок ID3 тега 2й версии. 
        Располагается вначале файла, перед аудиоданными.
@@ -179,21 +176,14 @@ class ID3Frame:
                 raise NotImplementedError("Encryption is not supported")
                 
             if self.header.flags["COMPRESS"]: 
-                try: data = data.decode('zlib')
-                except zlibError:
-                    data = dataBytes + data
-                    data = data.decode('zlib')
+                raise NotImplementedError("Compression is not supported")
                 
         elif self.id3Header.version == 3:
             if self.header.flags["COMPRESS"]:
-                usize, = struct.unpack('>L', data[:4])                      #Разобраться, что это за хрень!!!
-                data = data[4:]
+                raise NotImplementedError("Compression is not supported")
             
             if self.header.flags["ENCRYPT"]:
                 raise NotImplementedError("Encryption is not supported")
-                
-            if self.header.flags["COMPRESS"]:
-                data = data.decode('zlib')
 
         music_file.seek(currentPosition)
 
