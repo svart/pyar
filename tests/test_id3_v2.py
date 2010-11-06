@@ -26,8 +26,9 @@ if len(args)==1:
     print("Исполнитель:", tag.tagList["TPE1"].text)
     print("Альбом:", tag.tagList["TALB"].text)
     print("Название:", tag.tagList["TIT2"].text)
+    print("Дорожка:", tag.tagList["TRCK"].number)
     for frameName in tag.tagList.keys():
-        if frameName not in ["TIT2", "TPE1", "TALB"] and tag.tagList[frameName].header.dataLength != 0:
+        if frameName not in ["TIT2", "TPE1", "TALB", "TRCK"] and tag.tagList[frameName].header.dataLength != 0:
             print (tag.tagList[frameName].header.id.decode(), ":", end="")
             try:
                 print (tag.tagList[frameName].data.decode("UTF-8"))

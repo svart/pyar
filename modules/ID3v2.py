@@ -1,10 +1,5 @@
 #coding=UTF-8
 
-#
-# Заголовок ID3 тега 2й версии. 
-# Располагается вначале файла, перед аудиоданными.
-#
-
 class ID3Header:
     """Заголовок ID3 тега 2й версии. 
        Располагается вначале файла, перед аудиоданными.
@@ -210,6 +205,7 @@ class ID3v2Tag:
             if frame.header.id.decode() == "TIT2":   self.tagList["TIT2"] = TIT2(frame.data)
             elif frame.header.id.decode() == "TPE1": self.tagList["TPE1"] = TPE1(frame.data)
             elif frame.header.id.decode() == "TALB": self.tagList["TALB"] = TALB(frame.data)
+            elif frame.header.id.decode() == "TRCK": self.tagList["TRCK"] = TRCK(frame.data)
             else:
                 self.tagList[frame.header.id.decode()] = frame
             position =position + frame.header.headerLength + frame.header.dataLength
@@ -217,7 +213,12 @@ class ID3v2Tag:
 class TextFrame:
     def __init__(self, rawData):
         self.text = rawData.decode("UTF-8").strip("")
+
+class NumericTextFrame:
+    def __init__(self,rawData):
+        self.number = int(rawData.decode("UTF-8").strip("\x00"))
     
 class TIT2(TextFrame): "Название композиции"
 class TPE1(TextFrame): "Исполнитель"
 class TALB(TextFrame): "Название альбома"
+class TRCK(NumericTextFrame): "Номер дорожки"
