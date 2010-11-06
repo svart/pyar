@@ -5,8 +5,7 @@ sys.path.append("../modules")
 from ID3v1 import ID3v1, ID3v1NoTagError
 import optparse
 
-parser = optparse.OptionParser(usage="usage: %prog [path]")
-
+parser = optparse.OptionParser(usage="usage: %prog path")
 (options, args) = parser.parse_args()
 
 if len(args)==1:

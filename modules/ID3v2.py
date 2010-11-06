@@ -194,4 +194,17 @@ class ID3Frame:
         self.header.ReadHeader(music_file, startPosition)
         self.data = self.ReadData(music_file)
 
-
+class ID3v2Tag:
+    def __init__(self):
+        self.header = ID3Header()
+        self.tagList = []
+        
+    def ReadTag(self, music_file):
+        self.header.ReadHeader(music_file)
+        
+        position = 10
+        while position < self.header.dataLength:
+            frame = ID3Frame(self.header)
+            frame.ReadFrame(music_file, position)
+            self.tagList.append(frame)
+            position =position + frame.header.headerLength + frame.header.dataLength
