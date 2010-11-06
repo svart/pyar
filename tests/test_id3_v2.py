@@ -2,8 +2,7 @@
 import sys
 sys.path.append("../modules")
 
-from ID3v2 import ID3v2Tag
-import optparse
+import optparse, ID3v2
 
 
 parser = optparse.OptionParser(usage="usage: %prog path")
@@ -14,7 +13,7 @@ if len(args)==1:
     print("Getting tag:",filePath, "\n")
 
     f = open(filePath, "rb");
-    tag = ID3v2Tag()
+    tag = ID3v2.ID3v2Tag()
     
     tag.ReadTag(f)
     
@@ -24,12 +23,16 @@ if len(args)==1:
     print("")
 
 
-    for frame in tag.tagList:
-        if frame.header.dataLength != 0:# and bytes.decode(frame.header.id) != 'APIC':
+    print("Исполнитель:", tag.tagList["TPE1"].text)
+    print("Альбом:", tag.tagList["TALB"].text)
+    print("Название:", tag.tagList["TIT2"].text)
+    for frameName in tag.tagList.keys():
+        if frameName not in ["TIT2", "TPE1", "TALB"] and tag.tagList[frameName].header.dataLength != 0:
+            print (tag.tagList[frameName].header.id.decode(), ":", end="")
             try:
-                print (bytes.decode(frame.header.id), ":", bytes.decode(frame.data))
+                print (tag.tagList[frameName].data.decode("UTF-8"))
             except UnicodeDecodeError:
-                print (bytes.decode(frame.header.id), ": DECODING ERROR")
+                print ("DECODING ERROR")
 
     f.close()
 

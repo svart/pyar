@@ -17,7 +17,7 @@ if len(args)==1:
 
     try:
         tag.GetTag(f)
-        print("Название:", bytes.decode(tag.title))
+        print("Название:", tag.title.decode())
         print("Исполнитель:", bytes.decode(tag.artist))
         print("Альбом:", bytes.decode(tag.album))
         print("Год:", bytes.decode(tag.year))

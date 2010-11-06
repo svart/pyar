@@ -197,7 +197,7 @@ class ID3Frame:
 class ID3v2Tag:
     def __init__(self):
         self.header = ID3Header()
-        self.tagList = []
+        self.tagList = {}
         
     def ReadTag(self, music_file):
         self.header.ReadHeader(music_file)
@@ -206,5 +206,18 @@ class ID3v2Tag:
         while position < self.header.dataLength:
             frame = ID3Frame(self.header)
             frame.ReadFrame(music_file, position)
-            self.tagList.append(frame)
+            
+            if frame.header.id.decode() == "TIT2":   self.tagList["TIT2"] = TIT2(frame.data)
+            elif frame.header.id.decode() == "TPE1": self.tagList["TPE1"] = TPE1(frame.data)
+            elif frame.header.id.decode() == "TALB": self.tagList["TALB"] = TALB(frame.data)
+            else:
+                self.tagList[frame.header.id.decode()] = frame
             position =position + frame.header.headerLength + frame.header.dataLength
+
+class TextFrame:
+    def __init__(self, rawData):
+        self.text = rawData.decode("UTF-8").strip("")
+    
+class TIT2(TextFrame): "Название композиции"
+class TPE1(TextFrame): "Исполнитель"
+class TALB(TextFrame): "Название альбома"
