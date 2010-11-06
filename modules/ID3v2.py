@@ -211,6 +211,13 @@ class ID3v2Tag:
             elif frame.header.id.decode() == "TSST": self.tagList["TSST"] = TSST(frame.data)
             elif frame.header.id.decode() == "TSRC": self.tagList["TSRC"] = TSRC(frame.data)
             elif frame.header.id.decode() == "TPE1": self.tagList["TPE1"] = TPE1(frame.data)
+            elif frame.header.id.decode() == "TPE2": self.tagList["TPE2"] = TPE2(frame.data)
+            elif frame.header.id.decode() == "TPE3": self.tagList["TPE3"] = TPE3(frame.data)
+            elif frame.header.id.decode() == "TPE4": self.tagList["TPE4"] = TPE4(frame.data)
+            elif frame.header.id.decode() == "TOPE": self.tagList["TOPE"] = TOPE(frame.data)
+            elif frame.header.id.decode() == "TOLY": self.tagList["TOLY"] = TOLY(frame.data)
+            elif frame.header.id.decode() == "TCOM": self.tagList["TCOM"] = TCOM(frame.data)
+            elif frame.header.id.decode() == "TENC": self.tagList["TENC"] = TENC(frame.data)
             else:
                 self.tagList[frame.header.id.decode()] = frame
             position =position + frame.header.headerLength + frame.header.dataLength
@@ -230,7 +237,7 @@ class NumericTextFrame:
     def __init__(self,rawData):
         if isinstance(rawData, bytes):
             self.value = int(rawData.decode("UTF-8").strip("\x00"))
-        elif isinstance(rawData, str):
+        elif isinstance(rawData, str):  # Если строка то нет смысла декодировать
             self.value = int(rawData.strip("\x00"))
         
 class NumericPartTextFrame: 
@@ -246,8 +253,16 @@ class TIT2(TextFrame): "Название композиции"
 class TIT3(TextFrame): "Подуровень названия композиции"
 class TALB(TextFrame): "Название альбома"
 class TOAL(TextFrame): "Оригинальное название композиции"
-class TRCK(NumericTextFrame): "Номер дорожки"
+class TRCK(NumericTextFrame): "Номер дорожки" # TODO: переделать в NumericPartTextFrame
 class TPOS(NumericPartTextFrame): "Часть последовательности"
 class TSST(TextFrame): "Название последовательности"
 class TSRC(TextFrame): "International Standard Recording Code"
-class TPE1(TextFrame): "Исполнитель"
+
+class TPE1(TextFrame): " Lead artist/Lead performer/Soloist/Performing group"
+class TPE2(TextFrame): "Band/Orchestra/Accompaniment"
+class TPE3(TextFrame): "Conductor"
+class TPE4(TextFrame): "Interpreter/Remixer/Modifier"
+class TOPE(TextFrame): "Original Artist/Performer"
+class TOLY(TextFrame): "Original Lyricist"
+class TCOM(TextFrame): "Composer"
+class TENC(TextFrame): "Encoder"
