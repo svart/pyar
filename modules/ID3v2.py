@@ -202,23 +202,52 @@ class ID3v2Tag:
             frame = ID3Frame(self.header)
             frame.ReadFrame(music_file, position)
             
-            if frame.header.id.decode() == "TIT2":   self.tagList["TIT2"] = TIT2(frame.data)
-            elif frame.header.id.decode() == "TPE1": self.tagList["TPE1"] = TPE1(frame.data)
+            if frame.header.id.decode() == "TIT1":   self.tagList["TIT1"] = TIT1(frame.data)
+            elif frame.header.id.decode() == "TIT2": self.tagList["TIT2"] = TIT2(frame.data)
+            elif frame.header.id.decode() == "TIT3": self.tagList["TIT3"] = TIT3(frame.data)
             elif frame.header.id.decode() == "TALB": self.tagList["TALB"] = TALB(frame.data)
             elif frame.header.id.decode() == "TRCK": self.tagList["TRCK"] = TRCK(frame.data)
+            elif frame.header.id.decode() == "TPOS": self.tagList["TPOS"] = TPOS(frame.data)
+            elif frame.header.id.decode() == "TSST": self.tagList["TSST"] = TSST(frame.data)
+            elif frame.header.id.decode() == "TSRC": self.tagList["TSRC"] = TSRC(frame.data)
+            elif frame.header.id.decode() == "TPE1": self.tagList["TPE1"] = TPE1(frame.data)
             else:
                 self.tagList[frame.header.id.decode()] = frame
             position =position + frame.header.headerLength + frame.header.dataLength
 
 class TextFrame:
+    """Класс текстовых тегов.
+    """
     def __init__(self, rawData):
-        self.text = rawData.decode("UTF-8").strip("")
+        if isinstance(rawData, bytes):
+            self.text = rawData.decode("UTF-8").strip("\x00")
+        elif isinstance(rawData, str):
+            self.text = rawData.strip("\x00")
 
 class NumericTextFrame:
+    """Класс числовых тегов.
+    """
     def __init__(self,rawData):
-        self.number = int(rawData.decode("UTF-8").strip("\x00"))
+        if isinstance(rawData, bytes):
+            self.value = int(rawData.decode("UTF-8").strip("\x00"))
+        elif isinstance(rawData, str):
+            self.value = int(rawData.strip("\x00"))
+        
+class NumericPartTextFrame: 
+    """ Класс тегов части последовательности напр. 5/14
     
+        TODO: доделать правильное распознавание последовательности: 5/10
+    """
+    def __init__(self, rawData):
+        self.value = rawData.decode("UTF-8").strip("")
+    
+class TIT1(TextFrame): "Принадлежность содержимого к группе"
 class TIT2(TextFrame): "Название композиции"
-class TPE1(TextFrame): "Исполнитель"
+class TIT3(TextFrame): "Подуровень названия композиции"
 class TALB(TextFrame): "Название альбома"
+class TOAL(TextFrame): "Оригинальное название композиции"
 class TRCK(NumericTextFrame): "Номер дорожки"
+class TPOS(NumericPartTextFrame): "Часть последовательности"
+class TSST(TextFrame): "Название последовательности"
+class TSRC(TextFrame): "International Standard Recording Code"
+class TPE1(TextFrame): "Исполнитель"
