@@ -1,5 +1,7 @@
 #coding=UTF-8
 
+class ID3v1NoTagError(IOError): pass    ## Отсутсвие тега версии 1
+
 class ID3v1(object):
     """ Модуль для анализа ID3v1 тегов.
     """
@@ -31,7 +33,7 @@ class ID3v1(object):
         ID = music_file.read(3)
         
         if ID != b"TAG":
-            raise IOError('This file does not have ID3v1 tag.')
+            raise ID3v1NoTagError('This file does not have ID3v1 tag.')
         
         self.title = music_file.read(30)
         self.artist = music_file.read(30)
