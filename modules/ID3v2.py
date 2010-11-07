@@ -1,6 +1,8 @@
 #coding=UTF-8
 
-class ID3Header:
+class ID3v2TagContentError(Exception): pass
+
+class ID3Header(object):
     """Заголовок ID3 тега 2й версии. 
        Располагается вначале файла, перед аудиоданными.
     """
@@ -68,7 +70,7 @@ class ID3Header:
         self.flags = self.GetFlags(music_file)
         
 
-class ID3FrameHeader:
+class ID3FrameHeader(object):
     """Заголовок фрейма в ID3 теге.
     
        ID3 состоит из заголовка и следующими за ним фреймами.
@@ -130,7 +132,7 @@ class ID3FrameHeader:
         self.flags = self.GetFlags(music_file)
 
 
-class ID3Frame:
+class ID3Frame(object):
     """Основной объект ID3 тега
     
     Это базовый класс для различных видов тегов.
@@ -189,10 +191,14 @@ class ID3Frame:
         self.header.ReadHeader(music_file, startPosition)
         self.data = self.ReadData(music_file)
 
-class ID3v2Tag:
+class ID3v2Tag(object):
     def __init__(self):
         self.header = ID3Header()
         self.tagList = {}
+        self.supportedTags = ["TIT1", "TIT2", "TIT3", "TALB", "TRCK", "TPOS", "TSST", "TSRC", 
+                              "TPE1", "TPE2", "TPE3", "TPE4", "TOPE", "TOLY", "TCOM", "TENC", 
+                              "TBPM", "TLEN", "TKEY", "TLAN", "TCON", "TFLT", "TMED", "TMOO", 
+                              "TDRC"]
         
     def ReadTag(self, music_file):
         self.header.ReadHeader(music_file)
@@ -218,51 +224,99 @@ class ID3v2Tag:
             elif frame.header.id.decode() == "TOLY": self.tagList["TOLY"] = TOLY(frame.data)
             elif frame.header.id.decode() == "TCOM": self.tagList["TCOM"] = TCOM(frame.data)
             elif frame.header.id.decode() == "TENC": self.tagList["TENC"] = TENC(frame.data)
+            elif frame.header.id.decode() == "TBPM": self.tagList["TBPM"] = TBPM(frame.data) 
+            elif frame.header.id.decode() == "TLEN": self.tagList["TLEN"] = TLEN(frame.data)
+            elif frame.header.id.decode() == "TKEY": self.tagList["TKEY"] = TKEY(frame.data)
+            elif frame.header.id.decode() == "TLAN": self.tagList["TLAN"] = TLAN(frame.data)
+            elif frame.header.id.decode() == "TCON": self.tagList["TCON"] = TCON(frame.data)
+            elif frame.header.id.decode() == "TFLT": self.tagList["TFLT"] = TFLT(frame.data)
+            elif frame.header.id.decode() == "TMED": self.tagList["TMED"] = TMED(frame.data)
+            elif frame.header.id.decode() == "TMOO": self.tagList["TMOO"] = TMOO(frame.data)
+            elif frame.header.id.decode() == "TDRC": self.tagList["TDRC"] = TDRC(frame.data)
             else:
                 self.tagList[frame.header.id.decode()] = frame
+                
             position =position + frame.header.headerLength + frame.header.dataLength
 
-class TextFrame:
+class TextFrame(object):
     """Класс текстовых тегов.
     """
     def __init__(self, rawData):
         if isinstance(rawData, bytes):
-            self.text = rawData.decode("UTF-8").strip("\x00")
+            self.value = self.BytesToString(rawData).strip("\x00")
         elif isinstance(rawData, str):
-            self.text = rawData.strip("\x00")
+            self.value = rawData.strip("\x00")
+    
+    def BytesToString(self, rawData):
+        encodingList = ["UTF-8", "windows-1251", "KOI8-R", "CP866", "ISO8859-5", "windows-1252"]
+        result = ""
+        for bestEnc in encodingList:
+            try:
+                result = rawData.decode(bestEnc)
+            except:
+                pass
+            else:
+                break
+        return result
 
-class NumericTextFrame:
+class NumericTextFrame(TextFrame):
     """Класс числовых тегов.
     """
     def __init__(self,rawData):
-        if isinstance(rawData, bytes):
-            self.value = int(rawData.decode("UTF-8").strip("\x00"))
-        elif isinstance(rawData, str):  # Если строка то нет смысла декодировать
-            self.value = int(rawData.strip("\x00"))
+        TextFrame.__init__(self, rawData)
+        if self.value.isalnum():        # Если все числа, то все хорошо
+            self.value = int(self.value)
+        else:                           # иначе выдираем из последовательности число
+            result = ""
+            for char in self.value:
+                if char in [str(x) for x in range(10)]:
+                    result += char
+            self.value = result
         
-class NumericPartTextFrame: 
+class NumericPartTextFrame(TextFrame): 
     """ Класс тегов части последовательности напр. 5/14
     
-        TODO: доделать правильное распознавание последовательности: 5/10
+        !!!!!TODO: доделать правильное распознавание последовательности: 5/10
     """
     def __init__(self, rawData):
-        self.value = rawData.decode("UTF-8").strip("")
+        TextFrame.__init__(self, rawData)
+        
+class TimeStampTextFrame(TextFrame):
+    """ Класс временной метки.
+    """
+    def __init__(self, rawData):
+        TextFrame.__init__(self, rawData)
+        
+        
     
 class TIT1(TextFrame): "Принадлежность содержимого к группе"
 class TIT2(TextFrame): "Название композиции"
 class TIT3(TextFrame): "Подуровень названия композиции"
 class TALB(TextFrame): "Название альбома"
 class TOAL(TextFrame): "Оригинальное название композиции"
-class TRCK(NumericTextFrame): "Номер дорожки" # TODO: переделать в NumericPartTextFrame
+class TRCK(NumericPartTextFrame): "Номер дорожки"
 class TPOS(NumericPartTextFrame): "Часть последовательности"
 class TSST(TextFrame): "Название последовательности"
 class TSRC(TextFrame): "International Standard Recording Code"
 
-class TPE1(TextFrame): " Lead artist/Lead performer/Soloist/Performing group"
+class TPE1(TextFrame): "Lead artist/Lead performer/Soloist/Performing group"
 class TPE2(TextFrame): "Band/Orchestra/Accompaniment"
 class TPE3(TextFrame): "Conductor"
 class TPE4(TextFrame): "Interpreter/Remixer/Modifier"
 class TOPE(TextFrame): "Original Artist/Performer"
-class TOLY(TextFrame): "Original Lyricist"
+class TOLY(TextFrame): "Original Lyrics writer"
+class TEXT(TextFrame): "Lyricist/Text writer"
 class TCOM(TextFrame): "Composer"
 class TENC(TextFrame): "Encoder"
+
+class TBPM(NumericTextFrame): "BPM"
+class TLEN(NumericTextFrame): "Length"
+class TKEY(TextFrame): "Initial key"
+class TLAN(TextFrame): "Language"
+class TCON(TextFrame): "Content type"
+class TFLT(TextFrame): "File type"
+class TMED(TextFrame): "Source Media Type"
+class TMOO(TextFrame): "Mood"
+
+
+class TDRC(TimeStampTextFrame): "Recording time"

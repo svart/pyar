@@ -23,16 +23,18 @@ if len(args)==1:
     print("")
 
 
-    print("Исполнитель:", tag.tagList["TPE1"].text)
-    print("Альбом:", tag.tagList["TALB"].text)
-    print("Название:", tag.tagList["TIT2"].text)
+    print("Исполнитель:", tag.tagList["TPE1"].value)
+    print("Альбом:", tag.tagList["TALB"].value)
+    print("Название:", tag.tagList["TIT2"].value)
+    print("Жанр:", tag.tagList["TCON"].value)
     print("Дорожка:", tag.tagList["TRCK"].value)
+    print("Год:", tag.tagList["TDRC"].value)
     for frameName in tag.tagList.keys():
-        if frameName not in ["TIT2", "TPE1", "TALB", "TRCK"] and tag.tagList[frameName].header.dataLength != 0:
+        if frameName not in tag.supportedTags and tag.tagList[frameName].header.dataLength != 0:
             print (tag.tagList[frameName].header.id.decode(), ":", end="")
             try:
                 print (tag.tagList[frameName].data.decode("UTF-8"))
-            except UnicodeDecodeError:
+            except (UnicodeDecodeError, AttributeError):
                 print ("DECODING ERROR")
 
     f.close()
